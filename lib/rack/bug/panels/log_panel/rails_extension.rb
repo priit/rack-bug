@@ -6,7 +6,7 @@ if defined?(Rails) #&& Rails.logger
     
     def add_with_rack_bug(*args, &block)
       logged_message = add_without_rack_bug(*args, &block)
-      Rack::Bug::LogPanel.record(logged_message, *args)
+      Rack::Bug::LogPanel.record(*args)
       return logged_message
     end
   end

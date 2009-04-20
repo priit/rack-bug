@@ -4,11 +4,12 @@ module Rack
   module Bug
     
     class LogPanel < Panel
-      
+            
       def self.record(*args)
         return unless Rack::Bug.enabled?
+        @start_time ||= Time.now
         return unless args
-        logs << [args[1], args[0]]
+        logs << [args[1], args[0], ((Time.now - @start_time) * 1000).to_i]
       end
       
       def self.reset
