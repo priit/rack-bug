@@ -1,11 +1,15 @@
-if defined?(Rails) && Rails.logger
+if defined?(Rails) #&& Rails.logger
   module LoggingExtensions
-    def add(*args, &block)
-      logged_message = super
-      Rack::Bug::LogPanel.record(logged_message)
+    def self.included(target)
+      target.alias_method_chain :add, :rack_bug
+    end
+    
+    def add_with_rack_bug(*args, &block)
+      logged_message = add_without_rack_bug(*args, &block)
+      Rack::Bug::LogPanel.record(logged_message, *args)
       return logged_message
     end
   end
 
-  Rails.logger.extend LoggingExtensions
+  ActiveSupport::BufferedLogger.send :include, LoggingExtensions
 end
