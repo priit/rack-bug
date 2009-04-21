@@ -9,7 +9,7 @@ Usage:
  open http://RAILS_APP/__rack_bug__/bookmarklet.html
 
 Contributing:
-		You must currently have the latest webrat (0.4.4) which can be built found at  http://github.com/brynary/webrat
+You must currently have the latest webrat (0.4.4) which can be built found at  http://github.com/brynary/webrat
 
 Thanks to:
 
