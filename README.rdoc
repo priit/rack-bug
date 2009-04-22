@@ -22,7 +22,7 @@ Defaults to 127.0.0.1
 If you set a password here, then you will have to enter it when enabling Rack::Bug
 Defaults to nil.
 
-===== secret_key 
+==== secret_key 
 
 Set this if you want to be able to use the SQL query debugging toolbar features.
 Defaults to nil.
