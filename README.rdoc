@@ -11,7 +11,7 @@
 =Options
 You can pass in several options to Rack::Bug like so (in Rails):
 
-	config.middlware.use("Rack::Bug", {'example' => 'option'})
+	config.middlware.use("Rack::Bug", :password => 'muzak')
 
 ==== ip_masks
 Allowed ip addresses.
