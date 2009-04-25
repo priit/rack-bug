@@ -1,6 +1,7 @@
-module LoggingExtensions
+module LoggerExtensions
   def self.included(target)
-    target.alias_method_chain :add, :rack_bug
+    target.send :alias_method, :add_without_rack_bug, :add
+    target.send :alias_method, :add, :add_with_rack_bug
   end
   
   def add_with_rack_bug(*args, &block)
@@ -18,4 +19,4 @@ elsif defined?(Logger)
   logger_klass = Logger
 end
 
-logger_klass.send :include, LoggingExtensions if logger_klass
+logger_klass.send :include, LoggerExtensions if logger_klass

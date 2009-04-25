@@ -1,8 +1,11 @@
 $LOAD_PATH.unshift File.dirname(__FILE__) + '/../lib/'
+require 'logger'
 require 'rack/bug'
 
-class Example
+class Example  
   def call(env)
+    logger = Logger.new(STDOUT)
+    logger.info "called"
     @env = env
     [200, {"Content-Type" => "text/html"}, ['<html><body><a href="__rack_bug__/bookmarklet.html">Page with bookmarklet for enabling Rack::Bug</a></body></html>']]
   end
