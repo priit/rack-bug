@@ -6,7 +6,7 @@ module LoggerExtensions
   
   def add_with_rack_bug(*args, &block)
     logged_message = add_without_rack_bug(*args, &block)
-    Rack::Bug::LogPanel.record(*args)
+    Rack::Bug::LogPanel.record(args[1] || args[2], args[0])
     return logged_message
   end
 end
