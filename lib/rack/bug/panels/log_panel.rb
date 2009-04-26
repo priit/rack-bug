@@ -4,11 +4,13 @@ module Rack
   module Bug
     
     class LogPanel < Panel
-            
+      
+      LEVELS = [:unknown, :fatal, :warn, :info, :debug]
+      
       def self.record(message, severity)
         return unless Rack::Bug.enabled?
         @start_time ||= Time.now
-        logs << {:level => severity, :message => message, :time => ((Time.now - @start_time) * 1000).to_i}
+        logs << {:severity => severity, :message => message, :time => ((Time.now - @start_time) * 1000).to_i}
       end
       
       def self.reset

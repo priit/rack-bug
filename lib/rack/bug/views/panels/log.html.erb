@@ -1,23 +1,21 @@
 <h3>Log Messages</h3>
-<table>
-  <thead>
-    <tr>
-      <th>Level</th>
-      <th>Time</th>
-      <th>Message</th>
-      <th>Location</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% i = 1 %>
-    <% logs.each do |log| %>
-      <tr class="<%= i % 2 == 0 ? "even" : "odd" %>">
-        <td><%= log[:level] %></td>
-        <td><%= log[:time] %></td>
-        <td><%= log[:message] %></td>
-        <td><%#= log[1].to_s.gsub(/\e\[[;\d]+m/, "") %></td>
+<% (0..5).to_a.push(nil).each do |severity|%>
+  <table>
+    <thead>
+      <tr>
+        <th>Level: <%= "#{severity}: #{Rack::Bug::LogPanel::LEVELS[severity]}" if severity%></th>
+        <th>Time</th>
+        <th>Message</th>
       </tr>
-      <% i += 1 %>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% logs.select {|log| severity.nil? || log[:severity] == severity}.each_with_index do |log, i| %>
+        <tr class="<%= i % 2 == 0 ? "even" : "odd" %>">
+          <td><%= "#{log[:severity]}: #{Rack::Bug::LogPanel::LEVELS[log[:severity]]}" %></td>
+          <td><%= log[:time] %></td>
+          <td><%= log[:message] %><%#= log[1].to_s.gsub(/\e\[[;\d]+m/, "") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
