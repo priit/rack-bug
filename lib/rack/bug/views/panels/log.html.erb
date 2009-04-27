@@ -14,8 +14,8 @@
         <tr class="<%= i % 2 == 0 ? "even" : "odd" %>">
           <td><%= "#{log[:severity]}:#{Rack::Bug::LogPanel::LEVELS[log[:severity]]}" %></td>
           <td><%= log[:time] %></td>
-          <td><%= log[:message] %><%#= log[1].to_s.gsub(/\e\[[;\d]+m/, "") %></td>
-          <td><%= log[:call_stack].join("<br>") %><%#= log[1].to_s.gsub(/\e\[[;\d]+m/, "") %></td>
+          <td><%= log[:message].to_s.gsub(/\e\[[;\d]+m/, "") %></td>
+          <td><%= log[:call_stack].join("<br>") %></td>
         </tr>
       <% end %>
     </tbody>

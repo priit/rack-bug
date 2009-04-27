@@ -148,6 +148,7 @@
   text-align: left;
   cursor: pointer;
   border-right: 1px solid #b9d977;
+	white-space:normal;
 }
 
 #rack_bug .panel_content table td {
@@ -156,6 +157,8 @@
   background: #fff;
   color: #000;
   vertical-align: top;
+	text-align:left;
+	white-space:normal;
 }
 #rack_bug .panel_content table tr.odd td {
   background: #eee;
