@@ -5,12 +5,18 @@ module Rack
     
     class LogPanel < Panel
       
-      LEVELS = [:unknown, :fatal, :warn, :info, :debug]
+      LEVELS = [:debug, :info, :warn, :error, :fatal, :unknown]
       
       def self.record(message, severity)
         return unless Rack::Bug.enabled?
         @start_time ||= Time.now
-        logs << {:severity => severity, :message => message, :time => ((Time.now - @start_time) * 1000).to_i}
+        call_stack = caller
+        if defined?(Rails) && Rails.backtrace_cleaner
+          call_stack = Rails.backtrace_cleaner.clean(call_stack)
+        else
+          call_stack.slice(1..2)
+        end
+        logs << {:severity => severity, :message => message, :call_stack => call_stack, :time => ((Time.now - @start_time) * 1000).to_i}
       end
       
       def self.reset
