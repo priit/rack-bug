@@ -51,7 +51,7 @@ module Rack
         @env = env
         @original_request = Request.new(@env)
 
-        if toolbar_requested? && ip_authorized? && password_authorized?
+        if toolbar_requested? && ip_authorized? && ssl_authorized? && password_authorized?
           dispatch
         else
           pass
@@ -86,6 +86,10 @@ module Rack
         new_response = Rack::Response.new(new_body, 200, { "Content-Type" => "text/html" })
         new_response["Content-Length"] = new_body.size.to_s
         @response = new_response
+      end
+      
+      def ssl_authorized?
+        !options['rack-bug.ssl_required'] || (@original_request.env['HTTPS'] == 'on' || @original_request.env['HTTP_X_FORWARDED_PROTO'] == 'https')
       end
       
       def toolbar_requested?
