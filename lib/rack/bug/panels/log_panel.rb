@@ -14,7 +14,7 @@ module Rack
         if defined?(Rails) && Rails.backtrace_cleaner
           call_stack = Rails.backtrace_cleaner.clean(call_stack)
         else
-          call_stack.slice(1..2)
+          call_stack = call_stack.slice(2,2)
         end
         logs << {:severity => severity, :message => message, :call_stack => call_stack, :time => ((Time.now - @start_time) * 1000).to_i}
       end
