@@ -17,6 +17,11 @@ class Sample < Sinatra::Base
     set :raise_errors, true
   end
   
+  get "/bodiless" do
+    <<-HTML
+      <p>Hello</p>
+    HTML
+  end
   
   get "/redirect" do
     redirect "/"

@@ -35,6 +35,11 @@ describe Rack::Bug do
     response.should_not have_the_toolbar
   end
   
+  it "modify <body>less pages" do
+    response = get "/bodiless"
+    response.should have_the_toolbar
+  end
+  
   context "redirected when not configured to intercept redirects" do
     it "passes the redirect unmodified" do
       response = get "/redirect"
