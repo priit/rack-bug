@@ -209,3 +209,8 @@
 #rack_bug #sql.panel_content th.actions {
   width: 150px;
 }
+
+#rack_bug td.syntax {
+  overflow-x: auto;
+  max-width: 80em;
+}
