@@ -77,8 +77,8 @@ describe Rack::Bug do
   context "configured with a password" do
     it "inserts the Rack::Bug toolbar when the password matches" do
       sha = "545049d1c5e2a6e0dfefd37f9a9e0beb95241935"
-      response = get "/", {}, 'cookie' => ["rack_bug_enabled=1", "rack_bug_password=#{sha}"],
-        "rack-bug.password" => "secret"
+      header 'cookie', "rack_bug_enabled=1;rack_bug_password=#{sha}"
+      response = get "/", {}, "rack-bug.password" => "secret"
       response.should have_selector("div#rack_bug")
     end
     
