@@ -6,13 +6,15 @@ require "rack/test"
 $LOAD_PATH.unshift File.dirname(File.dirname(__FILE__)) + '/lib'
 $LOAD_PATH.unshift File.dirname(File.dirname(__FILE__))
 
-require "rack/bug"
-require "spec/fixtures/sample_app"
-require "spec/fixtures/dummy_panel"
+require 'logger'
 
 module Rails
   def self.version
     ""
+  end
+  
+  def self.logger
+    @logger ||= Logger.new(StringIO.new)
   end
   
   class Info
@@ -26,6 +28,11 @@ module ActiveRecord
   class Base
   end
 end
+
+Rails.logger
+require "rack/bug"
+require "spec/fixtures/sample_app"
+require "spec/fixtures/dummy_panel"
 
 Spec::Runner.configure do |config|
   TIME_MS_REGEXP = /\d+\.\d{2}ms/

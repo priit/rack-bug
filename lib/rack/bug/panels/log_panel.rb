@@ -5,10 +5,12 @@ module Rack
     
     class LogPanel < Panel
       
-      def self.record(message)
+      LEVELS = [:debug, :info, :warn, :error, :fatal, :unknown]
+      
+      def self.record(message, level)
         return unless Rack::Bug.enabled?
         return unless message
-        logs << message.to_s
+        logs << {:severity => LEVELS[level], :message => message}
       end
       
       def self.reset

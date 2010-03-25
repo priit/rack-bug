@@ -1,4 +1,12 @@
 require "sinatra/base"
+require 'logger'
+unless defined?(Rails)
+  module Rails
+    def self.logger
+      @logger ||= Logger.new(STDOUT)
+    end
+  end
+end
 
 class SampleApp < Sinatra::Base
 
@@ -11,6 +19,7 @@ class SampleApp < Sinatra::Base
   end
   
   get "/" do
+    Rails.logger.info "This is a logged message"
     if params[:content_type]
       headers["Content-Type"] = params[:content_type]
     end

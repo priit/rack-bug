@@ -12,9 +12,9 @@
     <% i = 1 %>
     <% logs.each do |log| %>
       <tr class="<%= i % 2 == 0 ? "even" : "odd" %>">
+        <td>:<%= log[:severity] %></td>
         <td></td>
-        <td></td>
-        <td><%= log.to_s.gsub(/\e\[[;\d]+m/, "") %></td>
+        <td><%= log[:message].to_s.gsub(/\e\[[;\d]+m/, "") %></td>
         <td></td>
       </tr>
       <% i += 1 %>
