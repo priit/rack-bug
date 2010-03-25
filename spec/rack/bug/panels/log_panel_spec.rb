@@ -4,12 +4,11 @@ module Rack::Bug
   describe LogPanel do
     before do
       LogPanel.reset
-      header "rack-bug.panel_classes", [LogPanel]
     end
     
     describe "heading" do
       it "displays 'Log'" do
-        response = get "/"
+        response = get "/", {}, {"rack-bug.panel_classes" => [LogPanel]}
         response.should have_heading("Log")
       end
     end
