@@ -19,28 +19,15 @@ module Rack
         
         @response = Rack::Response.new(body, status, headers)
         
-        intercept_redirect if intercept_redirect?
         inject_toolbar if valid_type_to_modify?
         
         return @response.to_a
       end
-      
-      def intercept_redirect?
-        @response.redirect? && @env["rack-bug.intercept_redirects"]
-      end
 
       def valid_type_to_modify?
-        (@response.ok? || @response.redirect? && @env["rack-bug.intercept_redirects"]) &&
+        @response.ok? &&
         @env["HTTP_X_REQUESTED_WITH"] != "XMLHttpRequest" &&
         MIME_TYPES.include?(@response.content_type.split(";").first)
-      end
-      
-      def intercept_redirect
-        redirect_to = @response.location
-        new_body = render_template("redirect", :redirect_to => @response.location)
-        new_response = Rack::Response.new(new_body, 200, { "Content-Type" => "text/html" })
-        new_response["Content-Length"] = new_body.size.to_s
-        @response = new_response
       end
       
       def builder

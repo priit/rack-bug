@@ -7,6 +7,7 @@ class Rack::Bug
   autoload :Panel,                  "rack/bug/panel"
   autoload :PanelApp,               "rack/bug/panel_app"
   autoload :ParamsSignature,        "rack/bug/params_signature"
+  autoload :RedirectInterceptor,     "rack/bug/redirect_interceptor"
   autoload :Render,                 "rack/bug/render"
   autoload :Toolbar,                "rack/bug/toolbar"
 
@@ -51,7 +52,7 @@ class Rack::Bug
     initialize_options options
     instance_eval(&block) if block_given?
     
-    @toolbar = Toolbar.new(@app)
+    @toolbar = Toolbar.new(RedirectInterceptor.new(@app))
   end
   
   def call(env)
