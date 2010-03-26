@@ -40,7 +40,7 @@ module Rack
         
         @response = Rack::Response.new(body, status, headers)
         
-        intercept_redirect if intercept_request?
+        intercept_redirect if intercept_redirect?
         inject_toolbar if valid_type_to_modify?
         
         return @response.to_a
@@ -75,7 +75,7 @@ module Rack
         actual_sha == expected_sha
       end
       
-      def intercept_request?
+      def intercept_redirect?
         @response.redirect? && options["rack-bug.intercept_redirects"]
       end
       
