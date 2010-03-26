@@ -40,11 +40,8 @@ module Rack
         
         @response = Rack::Response.new(body, status, headers)
         
-        if @response.redirect? && options["rack-bug.intercept_redirects"]
-          intercept_redirect
-        elsif modify?
-          inject_toolbar
-        end
+        intercept_redirect if intercept_request?
+        inject_toolbar if valid_type_to_modify?
         
         return @response.to_a
       end
@@ -78,8 +75,12 @@ module Rack
         actual_sha == expected_sha
       end
       
-      def modify?
-        @response.ok? &&
+      def intercept_request?
+        @response.redirect? && options["rack-bug.intercept_redirects"]
+      end
+      
+      def valid_type_to_modify?
+        (@response.ok? || @response.redirect? && options["rack-bug.intercept_redirects"]) &&
         @env["HTTP_X_REQUESTED_WITH"] != "XMLHttpRequest" &&
         MIME_TYPES.include?(@response.content_type.split(";").first)
       end
