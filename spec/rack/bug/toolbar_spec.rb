@@ -1,19 +1,25 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Rack::Bug do
+  it "serves up the original content" do
+    response = get "/"
+    response.should have_selector("p", :content => "Hello")
+  end
+  
   it "inserts the Rack::Bug toolbar" do
     response = get "/"
     response.should have_selector("div#rack_bug")
   end
   
+  it "does not insert toolbar if not requested" do
+    header 'cookie', ""
+    response = get "/"
+    response.should_not have_selector("div#rack_bug")
+  end
+  
   it "updates the Content-Length" do
     response = get "/"
     response["Content-Length"].should == response.body.size.to_s
-  end
-  
-  it "serves the Rack::Bug assets under /__rack_bug__/" do
-    response = get "/__rack_bug__/bug.css"
-    response.should be_ok
   end
   
   it "modifies HTML responses with a charset" do

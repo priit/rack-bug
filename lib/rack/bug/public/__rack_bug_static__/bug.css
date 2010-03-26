@@ -191,7 +191,7 @@
 #rack_bug .panel_content table tr.even td.rack_bug_spinner,
 #rack_bug .panel_content table td.rack_bug_spinner,
 #rack_bug .rack_bug_spinner {
-  background-image: url(/__rack_bug__/spinner.gif);
+  background-image: url(/__rack_bug_static__/spinner.gif);
   background-repeat: no-repeat;
   background-position: center center;
   text-indent: -3000px;

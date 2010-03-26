@@ -1,3 +1,8 @@
+require "rubygems"
+
+$LOAD_PATH.unshift File.dirname(__FILE__) + '/../../lib'
+require "rack/bug"
+
 require "sinatra/base"
 require 'logger'
 unless defined?(Rails)
@@ -8,7 +13,10 @@ unless defined?(Rails)
   end
 end
 
-class SampleApp < Sinatra::Base
+class Sample < Sinatra::Base
+
+  use Rack::Bug
+  set :environment, 'test'
 
   get "/redirect" do
     redirect "/"
@@ -30,7 +38,7 @@ class SampleApp < Sinatra::Base
         </head>
         <body>
           <p>Hello</p>
-          <p><a href="__rack_bug__/bookmarklet.html">Page with bookmarklet for enabling Rack::Bug</a></p>
+          <p><a href="__rack_bug_static__/bookmarklet.html">Page with bookmarklet for enabling Rack::Bug</a></p>
         </body>
       </html>
     HTML

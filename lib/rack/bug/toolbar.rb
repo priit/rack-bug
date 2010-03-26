@@ -2,22 +2,7 @@ require "ipaddr"
 require "digest"
 
 module Rack
-  module Bug
-    class RackStaticBugAvoider
-      def initialize(app, static_app)
-        @app = app
-        @static_app = static_app
-      end
-      
-      def call(env)
-        if env["PATH_INFO"]
-          @static_app.call(env)
-        else
-          @app.call(env)
-        end
-      end
-    end
-    
+  module Bug    
     class Toolbar
       include Options
       include Render
@@ -25,17 +10,9 @@ module Rack
       MIME_TYPES = ["text/html", "application/xhtml+xml"]
       
       def initialize(app, options = {})
-        @app = asset_server(app)
+        @app = app
         initialize_options options
         instance_eval(&block) if block_given?
-      end
-      
-      def asset_server(app)
-        RackStaticBugAvoider.new(app, Rack::Static.new(app, :urls => ["/__rack_bug__"], :root => public_path))
-      end
-      
-      def public_path
-        ::File.expand_path(::File.dirname(__FILE__) + "/../bug/public")
       end
       
       def call(env)

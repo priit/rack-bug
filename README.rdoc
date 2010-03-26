@@ -6,7 +6,7 @@ Usage:
  config.middleware.use "Rack::Bug"
 
  # add bookmarklet to browser
- open http://RAILS_APP/__rack_bug__/bookmarklet.html
+ open http://RAILS_APP/__rack_bug_static__/bookmarklet.html
 
 Notes:
 

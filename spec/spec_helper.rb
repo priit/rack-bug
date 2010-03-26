@@ -31,7 +31,7 @@ end
 
 Rails.logger
 require "rack/bug"
-require "spec/fixtures/sample_app"
+require "spec/fixtures/sample"
 require "spec/fixtures/dummy_panel"
 
 Spec::Runner.configure do |config|
@@ -49,10 +49,7 @@ Spec::Runner.configure do |config|
   end
   
   def app
-    Rack::Builder.new do
-      use Rack::Bug
-      run SampleApp.new
-    end
+    Sample
   end
   
   def have_row(container, key, value = nil)

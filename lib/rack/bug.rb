@@ -38,6 +38,11 @@ module Rack::Bug
   end
 
   def self.new(*args, &block)
-    Toolbar.new(*args, &block)
+    toolbar_app = Toolbar.new(*args, &block)
+    Rack::Static.new(toolbar_app, :urls => ["/__rack_bug_static__"], :root => public_path)
+  end
+  
+  def self.public_path
+    ::File.expand_path(::File.dirname(__FILE__) + "/bug/public")
   end
 end
