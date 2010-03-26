@@ -1,6 +1,8 @@
 require "rack"
+require "ipaddr"
+require "digest"
 
-module Rack::Bug
+class Rack::Bug
   autoload :Options,                "rack/bug/options"
   autoload :Panel,                  "rack/bug/panel"
   autoload :PanelApp,               "rack/bug/panel_app"
@@ -22,6 +24,8 @@ module Rack::Bug
 
   VERSION = "0.2.2.pre"
 
+  include Options
+
   class SecurityError < StandardError
   end
 
@@ -37,12 +41,49 @@ module Rack::Bug
     Thread.current["rack-bug.enabled"] == true
   end
 
-  def self.new(*args, &block)
-    toolbar_app = Toolbar.new(*args, &block)
-    Rack::Static.new(toolbar_app, :urls => ["/__rack_bug_static__"], :root => public_path)
+  def self.asset_server(app)
+    Rack::Static.new(app, :urls => ["/__rack_bug_static__"], 
+      :root => ::File.expand_path(::File.dirname(__FILE__) + "/bug/public"))
+  end
+
+  def initialize(app, options = {}, &block)
+    @app = self.class.asset_server(app)
+    initialize_options options
+    instance_eval(&block) if block_given?
+    
+    @toolbar = Toolbar.new(@app)
   end
   
-  def self.public_path
-    ::File.expand_path(::File.dirname(__FILE__) + "/bug/public")
+  def call(env)
+    env.replace @default_options.merge(env)
+    @env = env
+    @original_request = Rack::Request.new(@env)
+
+    if toolbar_requested? && ip_authorized? && password_authorized?
+      @toolbar.call(@env)
+    else
+      @app.call(@env)
+    end
+  end
+  
+  def toolbar_requested?
+    @original_request.cookies["rack_bug_enabled"]
+  end
+  
+  def ip_authorized?
+    return true unless options["rack-bug.ip_masks"]
+    
+    options["rack-bug.ip_masks"].any? do |ip_mask|
+      ip_mask.include?(IPAddr.new(@original_request.ip))
+    end
+  end
+  
+  def password_authorized?
+    return true unless options["rack-bug.password"]
+    
+    expected_sha = Digest::SHA1.hexdigest ["rack_bug", options["rack-bug.password"]].join(":")
+    actual_sha = @original_request.cookies["rack_bug_password"]
+    
+    actual_sha == expected_sha
   end
 end

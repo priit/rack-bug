@@ -1,37 +1,16 @@
-require "ipaddr"
-require "digest"
-
 module Rack
-  module Bug    
+  class Bug    
     class Toolbar
-      include Options
       include Render
       
       MIME_TYPES = ["text/html", "application/xhtml+xml"]
       
-      def initialize(app, options = {})
+      def initialize(app)
         @app = app
-        initialize_options options
-        instance_eval(&block) if block_given?
       end
       
       def call(env)
-        env.replace @default_options.merge(env)
         @env = env
-        @original_request = Request.new(@env)
-
-        if toolbar_requested? && ip_authorized? && password_authorized?
-          dispatch
-        else
-          pass
-        end
-      end
-      
-      def pass
-        @app.call(@env)
-      end
-      
-      def dispatch
         @env["rack-bug.panels"] = []
         
         Rack::Bug.enable
@@ -46,6 +25,16 @@ module Rack
         return @response.to_a
       end
       
+      def intercept_redirect?
+        @response.redirect? && @env["rack-bug.intercept_redirects"]
+      end
+
+      def valid_type_to_modify?
+        (@response.ok? || @response.redirect? && @env["rack-bug.intercept_redirects"]) &&
+        @env["HTTP_X_REQUESTED_WITH"] != "XMLHttpRequest" &&
+        MIME_TYPES.include?(@response.content_type.split(";").first)
+      end
+      
       def intercept_redirect
         redirect_to = @response.location
         new_body = render_template("redirect", :redirect_to => @response.location)
@@ -54,41 +43,10 @@ module Rack
         @response = new_response
       end
       
-      def toolbar_requested?
-        @original_request.cookies["rack_bug_enabled"]
-      end
-      
-      def ip_authorized?
-        return true unless options["rack-bug.ip_masks"]
-        
-        options["rack-bug.ip_masks"].any? do |ip_mask|
-          ip_mask.include?(IPAddr.new(@original_request.ip))
-        end
-      end
-      
-      def password_authorized?
-        return true unless options["rack-bug.password"]
-        
-        expected_sha = Digest::SHA1.hexdigest ["rack_bug", options["rack-bug.password"]].join(":")
-        actual_sha = @original_request.cookies["rack_bug_password"]
-        
-        actual_sha == expected_sha
-      end
-      
-      def intercept_redirect?
-        @response.redirect? && options["rack-bug.intercept_redirects"]
-      end
-      
-      def valid_type_to_modify?
-        (@response.ok? || @response.redirect? && options["rack-bug.intercept_redirects"]) &&
-        @env["HTTP_X_REQUESTED_WITH"] != "XMLHttpRequest" &&
-        MIME_TYPES.include?(@response.content_type.split(";").first)
-      end
-      
       def builder
         builder = Rack::Builder.new
         
-        options["rack-bug.panel_classes"].each do |panel_class|
+        @env["rack-bug.panel_classes"].each do |panel_class|
           builder.use panel_class
         end
         
