@@ -62,8 +62,25 @@ module Rack
         
         def filtered_backtrace
           @filtered_backtrace ||= @backtrace.map { |l| l.to_s.strip }.select do |line|
-            line.starts_with?(Rails.root) &&
-            !line.starts_with?(Rails.root.join("vendor"))
+            line.starts_with?(root) &&
+            !line.starts_with?(root("vendor"))
+          end
+        end
+        
+        def root(path = nil)
+          if defined?(Rails)
+            path ? Rails.root.join(path) : Rails.root
+          else
+            root = if defined?(RAILS_ROOT)
+              RAILS_ROOT
+            elsif defined?(ROOT)
+              ROOT
+            elsif defined?(Sinatra::Application)
+              Sinatra::Application.root
+            else
+              nil
+            end
+            path ? ::File.join(root, path) : root
           end
         end
       end
