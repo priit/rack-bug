@@ -60,7 +60,7 @@ class Rack::Bug
     env.replace @default_options.merge(env)
     @env = env
     
-    if toolbar_requested? && ip_authorized? && password_authorized?
+    if toolbar_requested? && ip_authorized? && password_authorized? && !@original_request.xhr?
       @toolbar.call(@env)
     else
       @app.call(@env)
