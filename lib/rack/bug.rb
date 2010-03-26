@@ -55,10 +55,10 @@ class Rack::Bug
   end
   
   def call(env)
+    @original_request = Rack::Request.new(env)
     env.replace @default_options.merge(env)
     @env = env
-    @original_request = Rack::Request.new(@env)
-
+    
     if toolbar_requested? && ip_authorized? && password_authorized?
       @toolbar.call(@env)
     else
