@@ -3,6 +3,8 @@ require "spec"
 require "webrat"
 require "rack/test"
 
+RAILS_ENV = "test"
+
 $LOAD_PATH.unshift File.dirname(File.dirname(__FILE__)) + '/lib'
 $LOAD_PATH.unshift File.dirname(File.dirname(__FILE__))
 
@@ -11,10 +13,6 @@ require 'logger'
 module Rails
   def self.version
     ""
-  end
-  
-  def self.logger
-    @logger ||= Logger.new(StringIO.new)
   end
   
   class Info
@@ -29,7 +27,6 @@ module ActiveRecord
   end
 end
 
-Rails.logger
 require "rack/bug"
 require "spec/fixtures/sample"
 require "spec/fixtures/dummy_panel"
