@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require 'spec/spec_helper'
 
 describe Rack::Bug do  
   it_should_behave_like "active toolbar"

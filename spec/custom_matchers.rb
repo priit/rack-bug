@@ -25,6 +25,6 @@ module CustomMatchers
   
   def have_panel(panel)
     panel = panel.to_s.demodulize.underscore.sub("_panel", "")
-    have_selector("#rack_bug ##{panel} table")
+    have_selector("##{panel}.panel_content")
   end
 end

@@ -14,7 +14,11 @@ module Rack
 
       def content
         return unless (defined?(Rails) && defined?(Rails::Info))
-        render_template "panels/rails_info"
+        @content ||= render_template "panels/rails_info"
+      end
+      
+      def has_content?
+        !!content
       end
       
     end

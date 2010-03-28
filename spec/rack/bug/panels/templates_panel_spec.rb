@@ -1,69 +1,58 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper')
+require 'spec/spec_helper'
 
-class Rack::Bug
-  describe TemplatesPanel do
-    before do
-      TemplatesPanel.reset
-      header "rack-bug.panel_classes", [TemplatesPanel]
+describe Rack::Bug::TemplatesPanel do
+  before do
+    @active_panel = Rack::Bug::TemplatesPanel
+    @active_panel.reset
+    @custom_header = "Templates: 0.00ms"
+  end
+  
+  it_should_behave_like "active panel"
+  
+  describe "content" do
+    it "displays the template paths" do
+      @active_panel.record("users/show") { }
+      get_with_panel.should contain("users/show")
     end
     
-    describe "heading" do
-      it "displays the total rendering time" do
-        response = get "/", {}, {"rack-bug.panel_classes" => [TemplatesPanel]}
-        response.should have_heading("Templates: 0.00ms")
+    it "displays the template children" do
+      @active_panel.record("users/show") do
+        @active_panel.record("users/toolbar") { }
+      end
+      
+      get_with_panel.should have_selector("li", :content => "users/show") do |li|
+        li.should contain("users/toolbar")
       end
     end
     
-    describe "content" do
-      it "displays the template paths" do
-        TemplatesPanel.record("users/show") { }
-        response = get "/", {}, {"rack-bug.panel_classes" => [TemplatesPanel]}
-        response.should contain("users/show")
-      end
-      
-      it "displays the template children" do
-        TemplatesPanel.record("users/show") do
-          TemplatesPanel.record("users/toolbar") { }
+    context "for templates that rendered templates" do
+      it "displays the total time" do
+        @active_panel.record("users/show") do
+          @active_panel.record("users/toolbar") { }
         end
         
-        response = get "/", {}, {"rack-bug.panel_classes" => [TemplatesPanel]}
-        response.should have_selector("li", :content => "users/show") do |li|
-          li.should contain("users/toolbar")
+        get_with_panel.should have_selector("li", :content => "users/show") do |li|
+          li.should contain(TIME_MS_REGEXP)
         end
       end
       
-      context "for templates that rendered templates" do
-        it "displays the total time" do
-          TemplatesPanel.record("users/show") do
-            TemplatesPanel.record("users/toolbar") { }
-          end
-          
-          response = get "/", {}, {"rack-bug.panel_classes" => [TemplatesPanel]}
-          response.should have_selector("li", :content => "users/show") do |li|
-            li.should contain(TIME_MS_REGEXP)
-          end
+      it "displays the exclusive time" do
+        @active_panel.record("users/show") do
+          @active_panel.record("users/toolbar") { }
         end
         
-        it "displays the exclusive time" do
-          TemplatesPanel.record("users/show") do
-            TemplatesPanel.record("users/toolbar") { }
-          end
-          
-          response = get "/", {}, {"rack-bug.panel_classes" => [TemplatesPanel]}
-          response.should have_selector("li", :content => "users/show") do |li|
-            li.should contain(/\d\.\d{2} exclusive/)
-          end
+        get_with_panel.should have_selector("li", :content => "users/show") do |li|
+          li.should contain(/\d\.\d{2} exclusive/)
         end
       end
-      
-      context "for leaf templates" do
-        it "does not display the exclusive time" do
-          TemplatesPanel.record("users/show") { }
-          
-          response = get "/", {}, {"rack-bug.panel_classes" => [TemplatesPanel]}
-          response.should contain("users/show") do |li|
-            li.should_not contain("exclusive")
-          end
+    end
+    
+    context "for leaf templates" do
+      it "does not display the exclusive time" do
+        @active_panel.record("users/show") { }
+        
+        get_with_panel.should contain("users/show") do |li|
+          li.should_not contain("exclusive")
         end
       end
     end

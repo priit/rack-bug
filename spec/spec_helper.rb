@@ -29,6 +29,7 @@ Spec::Runner.configure do |config|
     
     # Set the cookie that triggers Rack::Bug under normal conditions
     header 'cookie', "rack_bug_enabled=1"
+    header "rack-bug.panel_classes", []
   end
   
   config.after do
@@ -37,6 +38,10 @@ Spec::Runner.configure do |config|
   
   def app
     Sample
+  end
+  
+  def get_with_panel(url = "/", params={}, headers ={})
+    get url, params, {"rack-bug.panel_classes" => [@active_panel]}.merge(headers)
   end
   
   def add_rails

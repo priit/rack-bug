@@ -24,11 +24,14 @@ module SharedExamples
   end
   
   shared_examples_for "active panel" do
-    it_should_behave_like "active toolbar"
-    
+    it "displays the heading" do
+      #header "rack-bug.panel_classes", [@active_panel]
+      heading = @custom_header || @active_panel.to_s.demodulize.sub("Panel", "")
+      get_with_panel.should have_heading(heading)
+    end
+      
     it "displays the #{@active_panel} properties panel" do
-      response = get "/", {}, {"rack-bug.panel_classes" => [@active_panel]}
-      response.should have_panel(@active_panel)
+      get_with_panel.should have_panel(@active_panel)
     end
   end
 end
