@@ -9,10 +9,14 @@ RAILS_ENV ||= "development"
 log_to = RAILS_ENV == "test" ? StringIO.new : STDOUT
 LOGGER = Logger.new(log_to)
 
-
 class Sample < Sinatra::Base
   use Rack::Bug
   set :environment, 'test'
+  
+  configure :test do
+    set :raise_errors, true
+  end
+  
   
   get "/redirect" do
     redirect "/"
