@@ -15,6 +15,7 @@ class Rack::Bug
     option_accessor :password
     option_accessor :panel_classes
     option_accessor :intercept_redirects
+    option_accessor :require_ssl
 
     # The underlying options Hash. During initialization (or outside of a
     # request), this is a default values Hash. During a request, this is the
@@ -64,6 +65,7 @@ class Rack::Bug
     
     def initialize_options(options={})
       @default_options = {
+        'rack-bug.require_ssl' => false,
         'rack-bug.ip_masks' => [IPAddr.new("127.0.0.1")],
         'rack-bug.password' => nil,
         'rack-bug.verbose'  => nil,

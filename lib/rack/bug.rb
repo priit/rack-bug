@@ -7,8 +7,9 @@ class Rack::Bug
   autoload :Panel,                  "rack/bug/panel"
   autoload :PanelApp,               "rack/bug/panel_app"
   autoload :ParamsSignature,        "rack/bug/params_signature"
-  autoload :RedirectInterceptor,     "rack/bug/redirect_interceptor"
+  autoload :RedirectInterceptor,    "rack/bug/redirect_interceptor"
   autoload :Render,                 "rack/bug/render"
+  autoload :Security,               "rack/bug/security"
   autoload :Toolbar,                "rack/bug/toolbar"
 
   # Panels
@@ -26,6 +27,7 @@ class Rack::Bug
   VERSION = "0.2.2.pre"
 
   include Options
+  include Security
 
   class SecurityError < StandardError
   end
@@ -60,7 +62,7 @@ class Rack::Bug
     env.replace @default_options.merge(env)
     @env = env
     
-    if toolbar_requested? && ip_authorized? && password_authorized? && !@original_request.xhr?
+    if toolbar_requested? && safe_to_call_toolbar? && !@original_request.xhr?
       @toolbar.call(@env)
     else
       @app.call(@env)
@@ -70,21 +72,5 @@ class Rack::Bug
   def toolbar_requested?
     @original_request.cookies["rack_bug_enabled"]
   end
-  
-  def ip_authorized?
-    return true unless options["rack-bug.ip_masks"]
-    
-    options["rack-bug.ip_masks"].any? do |ip_mask|
-      ip_mask.include?(IPAddr.new(@original_request.ip))
-    end
-  end
-  
-  def password_authorized?
-    return true unless options["rack-bug.password"]
-    
-    expected_sha = Digest::SHA1.hexdigest ["rack_bug", options["rack-bug.password"]].join(":")
-    actual_sha = @original_request.cookies["rack_bug_password"]
-    
-    actual_sha == expected_sha
-  end
+
 end
