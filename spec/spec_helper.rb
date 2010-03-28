@@ -8,8 +8,6 @@ RAILS_ENV = "test"
 $LOAD_PATH.unshift File.dirname(File.dirname(__FILE__)) + '/lib'
 $LOAD_PATH.unshift File.dirname(File.dirname(__FILE__))
 
-require 'logger'
-
 module ActiveRecord
   class Base
   end
