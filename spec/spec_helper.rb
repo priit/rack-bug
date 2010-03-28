@@ -10,18 +10,6 @@ $LOAD_PATH.unshift File.dirname(File.dirname(__FILE__))
 
 require 'logger'
 
-module Rails
-  def self.version
-    ""
-  end
-  
-  class Info
-    def self.properties
-      []
-    end
-  end
-end
-
 module ActiveRecord
   class Base
   end

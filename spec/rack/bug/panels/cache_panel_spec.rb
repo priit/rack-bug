@@ -2,8 +2,17 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper')
 
 class Rack::Bug
   describe CachePanel do
+    
     before do
       CachePanel.reset
+      unless defined?(Rails)
+        @added_rails = true
+        Object.const_set :Rails, Module.new
+      end
+    end
+    
+    after do
+      Object.send :remove_const, :Rails if @added_rails
     end
     
     describe "heading" do
