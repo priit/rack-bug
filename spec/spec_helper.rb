@@ -8,11 +8,6 @@ RAILS_ENV = "test"
 $LOAD_PATH.unshift File.dirname(File.dirname(__FILE__)) + '/lib'
 $LOAD_PATH.unshift File.dirname(File.dirname(__FILE__))
 
-module ActiveRecord
-  class Base
-  end
-end
-
 require "rack/bug"
 require "spec/fixtures/sample"
 require "spec/fixtures/dummy_panel"
