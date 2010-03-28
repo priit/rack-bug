@@ -1,21 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Rack::Bug do
-  it "serves up the original content" do
-    response = get "/"
-    response.should have_selector("p", :content => "Hello")
-  end
-  
-  it "inserts the Rack::Bug toolbar" do
-    response = get "/"
-    response.should have_selector("div#rack_bug")
-  end
-  
-  it "does not insert toolbar if not requested" do
-    header 'cookie', ""
-    response = get "/"
-    response.should_not have_selector("div#rack_bug")
-  end
+describe Rack::Bug do  
+  it_should_behave_like "active toolbar"
   
   it "updates the Content-Length" do
     response = get "/"
@@ -24,29 +10,29 @@ describe Rack::Bug do
   
   it "modifies HTML responses with a charset" do
     response = get "/", :content_type => "application/xhtml+xml; charset=utf-8"
-    response.should have_selector("div#rack_bug")
+    response.should have_the_toolbar
   end
   
   it "does not modify XMLHttpRequest responses" do
     response = get "/", {}, { :xhr => true }
-    response.should_not have_selector("div#rack_bug")
+    response.should_not have_the_toolbar
   end
   
   it "modifies XHTML responses" do
     response = get "/", :content_type => "application/xhtml+xml"
-    response.should have_selector("div#rack_bug")
+    response.should have_the_toolbar
   end
   
   it "does not modify non-HTML responses" do
     response = get "/", :content_type => "text/csv"
-    response.should_not have_selector("div#rack_bug")
+    response.should_not have_the_toolbar
   end
   
   it "does not modify server errors" do
     app.disable :raise_errors
     response = get "/error"
     app.enable :raise_errors
-    response.should_not have_selector("div#rack_bug")
+    response.should_not have_the_toolbar
   end
   
   context "redirected when not configured to intercept redirects" do
@@ -63,12 +49,12 @@ describe Rack::Bug do
     it "does not insert the toolbar" do
       header 'cookie', ""
       response = get "/redirect"
-      response.should_not have_selector("div#rack_bug")
+      response.should_not have_the_toolbar
      end
     
     it "does not insert the toolbar if even toolbar requested" do
       response = get "/redirect"
-      response.should_not have_selector("div#rack_bug")
+      response.should_not have_the_toolbar
      end
   end
   
@@ -80,13 +66,13 @@ describe Rack::Bug do
     
     it "inserts the toolbar if requested" do
       response = get "/redirect", {}, "rack-bug.intercept_redirects" => true
-      response.should have_selector("div#rack_bug")
+      response.should have_the_toolbar
     end
     
     it "does not inserts the toolbar if not requested" do
       header 'cookie', ""
       response = get "/redirect", {}, "rack-bug.intercept_redirects" => true
-      response.should_not have_selector("div#rack_bug")
+      response.should_not have_the_toolbar
     end
   end
   
@@ -94,13 +80,13 @@ describe Rack::Bug do
     it "inserts the Rack::Bug toolbar when the IP matches" do
       response = get "/", {}, "REMOTE_ADDR" => "127.0.0.2", 
         "rack-bug.ip_masks" => [IPAddr.new("127.0.0.1/255.255.255.0")]
-      response.should have_selector("div#rack_bug")
+      response.should have_the_toolbar
     end
     
     it "is disabled when the IP doesn't match" do
       response = get "/", {}, "REMOTE_ADDR" => "128.0.0.1",
         "rack-bug.ip_masks" => [IPAddr.new("127.0.0.1/255.255.255.0")]
-      response.should_not have_selector("div#rack_bug")
+      response.should_not have_the_toolbar
     end
     
     it "doesn't use any panels" do
@@ -116,12 +102,12 @@ describe Rack::Bug do
       sha = "545049d1c5e2a6e0dfefd37f9a9e0beb95241935"
       header 'cookie', "rack_bug_enabled=1;rack_bug_password=#{sha}"
       response = get "/", {}, "rack-bug.password" => "secret"
-      response.should have_selector("div#rack_bug")
+      response.should have_the_toolbar
     end
     
     it "is disabled when the password doesn't match" do
       response = get "/", {}, "rack-bug.password" => "secret"
-      response.should_not have_selector("div#rack_bug")
+      response.should_not have_the_toolbar
     end
     
     it "doesn't use any panels" do

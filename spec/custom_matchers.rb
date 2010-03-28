@@ -18,4 +18,13 @@ module CustomMatchers
       end
     end
   end
+  
+  def have_the_toolbar
+    have_selector("#rack_bug_toolbar")
+  end
+  
+  def have_panel(panel)
+    panel = panel.to_s.demodulize.underscore.sub("_panel", "")
+    have_selector("#rack_bug ##{panel} table")
+  end
 end

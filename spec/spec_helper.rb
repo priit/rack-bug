@@ -2,6 +2,7 @@ require "rubygems"
 require "spec"
 require "webrat"
 require "rack/test"
+require 'active_support'
 
 RAILS_ENV = "test"
 
@@ -12,6 +13,7 @@ require "rack/bug"
 require "spec/fixtures/sample"
 require "spec/fixtures/dummy_panel"
 require "spec/custom_matchers"
+require "spec/shared_examples"
 
 Spec::Runner.configure do |config|
   TIME_MS_REGEXP = /\d+\.\d{2}ms/
@@ -19,6 +21,7 @@ Spec::Runner.configure do |config|
   config.include Rack::Test::Methods
   config.include Webrat::Matchers
   config.include CustomMatchers
+  config.include SharedExamples
   
   config.before do
     # This allows specs to record data outside the request
@@ -28,7 +31,22 @@ Spec::Runner.configure do |config|
     header 'cookie', "rack_bug_enabled=1"
   end
   
+  config.after do
+    remove_rails_if_added
+  end
+  
   def app
     Sample
   end
+  
+  def add_rails
+    unless defined?(Rails)
+      @added_rails = true
+      Object.const_set :Rails, Module.new
+    end
+  end
+  
+  def remove_rails_if_added
+    Object.send :remove_const, :Rails if @added_rails && defined?(Rails)
+  end  
 end

@@ -3,35 +3,59 @@ require File.expand_path(File.dirname(__FILE__) + '/../../../spec_helper')
 class Rack::Bug
   describe RailsInfoPanel do
     before do
-      unless defined?(Rails)
-        @added_rails = true
-        Object.const_set :Rails, Module.new
-        Rails::Info = Class.new do
-          def self.properties
-            []
-          end
-        end
-      end
+      @active_panel = RailsInfoPanel
     end
     
-    after do
-      Object.send :remove_const, :Rails if @added_rails
-    end
-    
-    describe "heading" do
-      it "displays the Rails version" do
-        Rails.stub!(:version => "v2.3.0")
-        response = get "/", {}, {"rack-bug.panel_classes" => [RailsInfoPanel]}
-        response.should have_heading("Rails v2.3.0")
+    describe "when Rails is undefined" do
+      it_should_behave_like "active toolbar"
+      
+      it "does not load RailsInfo" do
+        response = get "/", {}, {"rack-bug.panel_classes" => [@active_panel]}
+        response.should_not have_panel("rails_info")
       end
     end
 
-    describe "content" do
-      it "displays the Rails::Info properties" do
-        Rails.stub!(:version => "v2.3.0")
-        Rails::Info.stub!(:properties => [["Name", "Value"]])
-        response = get "/", {}, {"rack-bug.panel_classes" => [RailsInfoPanel]}
-        response.should have_row("#rails_info", "Name", "Value")
+    
+    describe "when Rails is defined" do 
+      before do
+        add_rails
+      end
+      
+      describe "and Rails::Info is undefined, such as in production" do
+        it_should_behave_like "active toolbar"
+        
+        it "does not load RailsInfo" do
+          response = get "/", {}, {"rack-bug.panel_classes" => [@active_panel]}
+          response.should_not have_panel("rails_info")
+        end
+      end
+      
+      describe "and Rails::Info is defined" do
+        before do
+          Rails::Info = Class.new do
+            def self.properties
+              [["Name", "Value"]]
+            end
+          end
+          Rails.stub!(:version => "v2.3.0")
+          
+        end
+      
+        after do
+          Rails.send :remove_const, :Info
+        end
+      
+        it_should_behave_like "active panel"
+      
+        it "displays the Rails version in the heading" do         
+          response = get "/", {}, {"rack-bug.panel_classes" => [@active_panel]}
+          response.should have_heading("Rails v2.3.0")
+        end
+
+        it "displays the Rails::Info specific row" do
+          response = get "/", {}, {"rack-bug.panel_classes" => [@active_panel]}
+          response.should have_row("#rails_info", "Name", "Value")
+        end
       end
     end
   end

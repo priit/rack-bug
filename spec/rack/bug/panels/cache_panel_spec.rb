@@ -11,10 +11,6 @@ class Rack::Bug
       end
     end
     
-    after do
-      Object.send :remove_const, :Rails if @added_rails
-    end
-    
     describe "heading" do
       it "displays the total memcache time" do
         response = get "/", {}, {"rack-bug.panel_classes" => [CachePanel]}
