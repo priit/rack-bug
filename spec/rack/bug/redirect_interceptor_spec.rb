@@ -2,43 +2,32 @@ require 'spec/spec_helper'
 
 describe Rack::Bug::RedirectInterceptor do
   context "redirected when not configured to intercept redirects" do
+    subject { get "/redirect" }
+        
+    it { should_not show_the_interception_page }
+    it { should_not have_the_toolbar }
+    
     it "passes the redirect unmodified" do
-      response = get "/redirect"
-      response.status.should == 302
+      subject.status.should be(302)
     end
-    
-    it "does not show the interception page" do
-      response = get "/redirect"
-      response.body.should_not contain("Location: /")
-    end
-
-    it "does not insert the toolbar" do
-      header 'cookie', ""
-      response = get "/redirect"
-      response.should_not have_the_toolbar
-     end
-    
-    it "does not insert the toolbar if even toolbar requested" do
-      response = get "/redirect"
-      response.should_not have_the_toolbar
-     end
   end
   
   context "redirected when configured to intercept redirects" do
-    it "shows the interception page" do
-      response = get "/redirect", {}, "rack-bug.intercept_redirects" => true
-      response.should contain("Location: /")
-    end
+    subject { get "/redirect", {}, "rack-bug.intercept_redirects" => true }
     
-    it "inserts the toolbar if requested" do
-      response = get "/redirect", {}, "rack-bug.intercept_redirects" => true
-      response.should have_the_toolbar
-    end
+    it { should show_the_interception_page }
+    it { should have_the_toolbar }
     
     it "does not inserts the toolbar if not requested" do
       header 'cookie', ""
       response = get "/redirect", {}, "rack-bug.intercept_redirects" => true
       response.should_not have_the_toolbar
+    end
+  end
+  
+  def show_the_interception_page
+    simple_matcher("show the interception page") do |response|
+      response.body.include? 'id="rack_bug_toolbar"'
     end
   end
 end

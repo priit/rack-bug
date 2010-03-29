@@ -1,15 +1,15 @@
 require 'spec/spec_helper'
 
 describe Rack::Bug::MemoryPanel do
-  before do 
-    @active_panel = Rack::Bug::MemoryPanel
-  end
+  before { @active_panel = Rack::Bug::MemoryPanel }
+  subject { get_with_panel }
+  
   
   it "displays the total memory" do
-    get_with_panel.should have_heading(/\d+ KB total/)
+    should have_heading(/\d+ KB total/)
   end
   
   it "displays the memory change during the request" do
-    get_with_panel.should have_heading(/\d+ KB Δ/)
+    should have_heading(/\d+ KB Δ/)
   end
 end

@@ -20,11 +20,21 @@ module CustomMatchers
   end
   
   def have_the_toolbar
-    have_selector("#rack_bug_toolbar")
+    simple_matcher("have the toolbar") do |response|
+      response.body.include? 'id="rack_bug_toolbar"'
+    end
+  end
+  
+  def have_the_original_content
+    simple_matcher("have the original content") do |response|
+      response.body.include? '<p>Hello</p>'
+    end
   end
   
   def have_panel(panel)
-    panel = panel.to_s.demodulize.underscore.sub("_panel", "")
-    have_selector("##{panel}.panel_content")
+    simple_matcher("have the #{panel} properties panel") do |response|
+      panel = panel.to_s.demodulize.underscore.sub("_panel", "")
+      response.body.include? %Q{<div class="panel_content" id="#{panel}">}
+    end
   end
 end

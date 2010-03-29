@@ -9,12 +9,13 @@ describe Rack::Bug::LogPanel do
   it_should_behave_like "active panel"
   
   describe "content" do
+    subject { get_with_panel }
     it "displays recorded log lines" do
-      get_with_panel.should contain("This is a logged message")
+      should contain("This is a logged message")
     end
 
     it "displays log level" do
-      get_with_panel.should have_selector("td", :content => ":info")
+      should have_selector("td", :content => ":info")
     end
   end
   
