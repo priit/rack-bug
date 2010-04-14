@@ -2,19 +2,13 @@ require "rubygems"
 require "spec/rake/spectask"
 
 Spec::Rake::SpecTask.new do |t|
-  t.spec_opts = ['--options', "\"#{File.dirname(__FILE__)}/spec/spec.opts\""]
+  t.spec_opts = ["--color"]
 end
 
-desc "Run all specs in spec directory with RCov"
 Spec::Rake::SpecTask.new(:rcov) do |t|
-  t.spec_opts = ['--options', "\"#{File.dirname(__FILE__)}/spec/spec.opts\""]
+  t.spec_opts = ["--color"]
   t.rcov = true
-  t.rcov_opts = lambda do
-    IO.readlines(File.dirname(__FILE__) + "/spec/rcov.opts").map {|l| l.chomp.split " "}.flatten
-  end
+  t.rcov_opts = ["-x","gems,spec"]
 end
 
-task :spec => :check_dependencies
-
-desc "Run the specs"
 task :default => :spec
