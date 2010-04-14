@@ -19,7 +19,7 @@ describe Rack::Bug::RedisPanel do
     end
     
     it "displays the total redis time" do
-      should have_row("#redis_usage", "Total Time", "0.00ms")
+      should have_row("#redis_usage", "Total Time", /\d.\d\dms/)
     end
   end
   
