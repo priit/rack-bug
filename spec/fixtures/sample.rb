@@ -5,7 +5,7 @@ require "rack/bug"
 
 require "sinatra/base"
 require 'logger'
-RAILS_ENV ||= "development"
+RAILS_ENV = "development" unless defined?(RAILS_ENV)
 log_to = RAILS_ENV == "test" ? StringIO.new : STDOUT
 LOGGER = Logger.new(log_to)
 
