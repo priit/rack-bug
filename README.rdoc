@@ -1,10 +1,19 @@
 Usage:
 
- script/plugin install git://github.com/brynary/rack-bug.git 
+ rails plugin install git://github.com/galetahub/rack-bug.git 
 
  # config/environments/development.rb
  config.middleware.use "Rack::Bug"
 
+ # or
+ require "rack/bug"
+ require "ipaddr"
+ ...
+ config.middleware.use Rack::Bug,
+    :ip_masks   => [IPAddr.new("127.0.0.1")],
+    :secret_key => "epT5uCIchlsHCeR9dloOeAPG66PtHd9K8l0q9avitiaA/KUrY7DE52hD4yWY+8z1",
+    :password   => "secret"
+ 
  # add bookmarklet to browser
  open http://RAILS_APP/__rack_bug_static__/bookmarklet.html
 
@@ -16,7 +25,13 @@ Notes:
  HoptoadNotifier.configure do |config|
    config.environment_filters << 'rack-bug.*'
  end
- 
+
+Gemfile:
+
+ group :development do
+  gem "rack-bug", :require => 'rack/bug'
+  gem "ruby-debug"
+ end
  
 Thanks to:
 
