@@ -31,7 +31,6 @@ Gem::Specification.new do |s|
     "lib/rack/bug/panels/cache_panel/panel_app.rb",
     "lib/rack/bug/panels/cache_panel/stats.rb",
     "lib/rack/bug/panels/log_panel.rb",
-    "lib/rack/bug/panels/log_panel/rails_extension.rb",
     "lib/rack/bug/panels/memory_panel.rb",
     "lib/rack/bug/panels/rails_info_panel.rb",
     "lib/rack/bug/panels/redis_panel.rb",
@@ -74,9 +73,7 @@ Gem::Specification.new do |s|
     "lib/rack/bug/views/redirect.html.erb",
     "lib/rack/bug/views/toolbar.html.erb",
     "rack-bug.gemspec",
-    "spec/fixtures/config.ru",
     "spec/fixtures/dummy_panel.rb",
-    "spec/fixtures/sample_app.rb",
     "spec/rack/bug/panels/active_record_panel_spec.rb",
     "spec/rack/bug/panels/cache_panel_spec.rb",
     "spec/rack/bug/panels/log_panel_spec.rb",
@@ -86,9 +83,6 @@ Gem::Specification.new do |s|
     "spec/rack/bug/panels/sql_panel_spec.rb",
     "spec/rack/bug/panels/templates_panel_spec.rb",
     "spec/rack/bug/panels/timer_panel_spec.rb",
-    "spec/rack/toolbar_spec.rb",
-    "spec/rcov.opts",
-    "spec/spec.opts",
     "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/brynary/rack-bug}
@@ -98,7 +92,6 @@ Gem::Specification.new do |s|
   s.summary = %q{Debugging toolbar for Rack applications implemented as middleware}
   s.test_files = [
     "spec/fixtures/dummy_panel.rb",
-    "spec/fixtures/sample_app.rb",
     "spec/rack/bug/panels/active_record_panel_spec.rb",
     "spec/rack/bug/panels/cache_panel_spec.rb",
     "spec/rack/bug/panels/log_panel_spec.rb",
@@ -108,7 +101,6 @@ Gem::Specification.new do |s|
     "spec/rack/bug/panels/sql_panel_spec.rb",
     "spec/rack/bug/panels/templates_panel_spec.rb",
     "spec/rack/bug/panels/timer_panel_spec.rb",
-    "spec/rack/toolbar_spec.rb",
     "spec/spec_helper.rb"
   ]
 
